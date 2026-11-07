@@ -66,11 +66,12 @@
 
 /* Mesmo padrão nas margens do cabeçalho do portfólio. */
 .heading-with-pattern { position: relative; isolation: isolate; }
-.portfolio-heading-frame { width: min(920px, calc(100% - 48px)); margin: 0 auto; border-inline: 1px solid var(--border); }
-.portfolio-heading-frame .page-heading { padding: 64px 32px 56px; border-bottom: 0; }
-.portfolio-heading-frame .page-heading h1 { font-size: clamp(2.4rem, 4.2vw, 3.8rem); line-height: 1.06; margin: 20px 0 18px; max-width: 760px; }
-.portfolio-heading-frame .page-heading .lead { font-size: clamp(1rem, 1.25vw, 1.12rem); max-width: 600px; }
-@media(max-width: 720px) { .portfolio-heading-frame { width: calc(100% - 32px); } .portfolio-heading-frame .page-heading { padding: 48px 20px 42px; } }
+.portfolio-heading-frame, .course-heading-frame { width: min(920px, calc(100% - 48px)); margin: 0 auto; border-inline: 1px solid var(--border); }
+.portfolio-heading-frame .page-heading, .course-heading-frame .page-heading { padding: 64px 32px 56px; border-bottom: 0; }
+.portfolio-heading-frame .page-heading h1, .course-heading-frame .page-heading h1 { font-size: clamp(2.4rem, 4.2vw, 3.8rem); line-height: 1.06; margin: 20px 0 18px; max-width: 760px; }
+.portfolio-heading-frame .page-heading .lead, .course-heading-frame .page-heading .lead { font-size: clamp(1rem, 1.25vw, 1.12rem); max-width: 600px; }
+.course-heading-frame { border-bottom: 1px solid var(--border); }
+@media(max-width: 720px) { .portfolio-heading-frame, .course-heading-frame { width: calc(100% - 32px); } .portfolio-heading-frame .page-heading, .course-heading-frame .page-heading { padding: 48px 20px 42px; } }
 
 /* Apoiadores da formação. */
 .supporters { padding: 56px 32px; }
