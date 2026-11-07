@@ -71,7 +71,9 @@ html{overflow-x:clip}body{font-family:'LG Text',sans-serif;overflow-x:clip}h1,h2
 
 /* A cena acompanha uma rolagem curta e libera a página ao terminar. */
 .intro-sticky{position:relative}
-.has-scroll-intro .intro-scene{height:250svh}
+.has-scroll-intro .intro-scene{height:350svh}
+.has-scroll-intro{scroll-snap-type:y proximity}
+.has-scroll-intro .home-content{scroll-snap-align:start}
 .has-scroll-intro .intro-sticky{position:sticky;top:0;height:100svh;overflow:hidden}
 .has-scroll-intro .hero{height:100%;min-height:0}
 .hero-copy{opacity:var(--intro-copy-opacity,1);transform:translateY(var(--intro-copy-offset,0px))}

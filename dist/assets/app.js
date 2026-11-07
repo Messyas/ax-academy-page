@@ -68,19 +68,14 @@
   const copy = document.querySelector('.hero-copy');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const cols = 68, rows = 48, mask = new Uint8Array(cols * rows);
-  const bot = new Uint8Array(cols * rows), flow = new Uint8Array(cols * rows);
+  const bot = new Uint8Array(cols * rows);
   const rectMask = (target, x1, y1, x2, y2, value = 1) => {
     for (let y = y1; y < y2; y++) for (let x = x1; x < x2; x++) target[y * cols + x] = value;
   };
-  // Silhuetas de robô e fluxo, construídas na mesma grade do AX.
+  // Silhueta do robô, construída na mesma grade do AX.
   rectMask(bot, 19, 14, 49, 35); rectMask(bot, 16, 20, 19, 29); rectMask(bot, 49, 20, 52, 29);
   rectMask(bot, 32, 7, 36, 14); rectMask(bot, 30, 5, 38, 9); rectMask(bot, 24, 37, 44, 41);
   rectMask(bot, 25, 21, 29, 25, 0); rectMask(bot, 39, 21, 43, 25, 0); rectMask(bot, 27, 30, 41, 32, 0);
-  rectMask(flow, 14, 19, 24, 29); rectMask(flow, 29, 6, 39, 16);
-  rectMask(flow, 44, 19, 54, 29); rectMask(flow, 29, 32, 39, 42);
-  rectMask(flow, 23, 22, 45, 26); rectMask(flow, 32, 15, 36, 33);
-  rectMask(flow, 17, 22, 21, 26, 0); rectMask(flow, 32, 9, 36, 13, 0);
-  rectMask(flow, 47, 22, 51, 26, 0); rectMask(flow, 32, 35, 36, 39, 0);
   const image = new Image(); image.src = 'assets/ax-logo.png';
   let width = 0, height = 0, cell = 0, ox = 0, oy = 0, start = 0, frame = 0, pointer = null;
   let progress = 0, imageReady = false, sceneVisible = true, scrollFrame = 0;
@@ -95,7 +90,7 @@
       const bounds = scene.getBoundingClientRect();
       progress = clamp(-bounds.top / Math.max(1, bounds.height - window.innerHeight));
     }
-    const fade = smooth(.12, .35, progress);
+    const fade = smooth(.14, .38, progress);
     if (copy) {
       copy.style.setProperty('--intro-copy-opacity', String(1 - fade));
       copy.style.setProperty('--intro-copy-offset', `${-18 * fade}px`);
@@ -103,7 +98,7 @@
       if (fade > .98) copy.setAttribute('aria-hidden', 'true');
       else copy.removeAttribute('aria-hidden');
     }
-    host.style.setProperty('--intro-overlay-opacity', String(1 - smooth(.12, .42, progress)));
+    host.style.setProperty('--intro-overlay-opacity', String(1 - smooth(.14, .48, progress)));
   };
   const queueProgress = () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateProgress); };
   const resize = () => {
@@ -119,29 +114,33 @@
     ctx.clearRect(0, 0, width, height);
     const dark = root.dataset.theme === 'dark';
     ctx.fillStyle = dark ? '#ffffff' : '#1a1a1a';
-    const center = smooth(.16, .48, progress);
-    const botMix = smooth(.46, .62, progress);
-    const flowMix = smooth(.68, .82, progress);
-    const fadeOut = 1 - smooth(.85, .99, progress);
+    const center = smooth(.14, .50, progress);
     const centeredCell = Math.min(width / (width <= 720 ? 55 : 70), height / 50);
     const drawCell = mix(cell, centeredCell, center);
     const drawX = mix(ox, (width - cols * centeredCell) / 2, center);
     const rise = height * .11 * smooth(0, .2, progress) * (1 - center);
     const drawY = mix(oy - rise, (height - rows * centeredCell) / 2, center);
-    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+    const firstColumn = Math.floor(-drawX / drawCell) - 1;
+    const lastColumn = Math.ceil((width - drawX) / drawCell) + 1;
+    const firstRow = Math.floor(-drawY / drawCell) - 1;
+    const lastRow = Math.ceil((height - drawY) / drawCell) + 1;
+    for (let y = firstRow; y < lastRow; y++) for (let x = firstColumn; x < lastColumn; x++) {
       const px = drawX + x * drawCell + drawCell / 2, py = drawY + y * drawCell + drawCell / 2;
       const distance = Math.hypot(x - cols / 2, y - rows / 2);
-      const local = reduced.matches ? 1 : clamp((t - distance * .026 - rand(x,y) * .2) / .5);
+      const local = reduced.matches ? 1 : Math.max(clamp((t - distance * .026 - rand(x,y) * .2) / .5), smooth(0, .08, progress));
       if (!local) continue;
       const ease = 1 + 2.7 * Math.pow(local - 1, 3) + 1.7 * Math.pow(local - 1, 2);
       const wave = reduced.matches ? .5 : .5 + .25 * Math.sin(t * .9 + x * .19 + y * .16) + .25 * Math.sin(t * 1.3 + rand(x,y) * 6.28);
       const hover = pointer ? Math.pow(clamp(1 - Math.hypot(px - pointer.x, py - pointer.y) / (drawCell * 8)), 2) : 0;
+      const inside = x >= 0 && x < cols && y >= 0 && y < rows;
       const index = y * cols + x;
-      const active = mix(mix(mask[index], bot[index], botMix), flow[index], flowMix);
+      const delay = rand(x, y) * .07 + clamp(distance / 48) * .04;
+      const botMix = smooth(.32 + delay, .76 + delay, progress);
+      const active = inside ? mix(mask[index], bot[index], botMix) : 0;
       const edge = cols - 2 - (y / rows) * 10;
       const edgeFade = mix(clamp((edge - x) / 5), 1, center);
       const base = .018 + wave * .035;
-      ctx.globalAlpha = clamp(base + active * (.10 + wave * .10 + center * .08) + hover * .08) * edgeFade * fadeOut * Math.min(1, local * 1.6);
+      ctx.globalAlpha = clamp(base + active * (.10 + wave * .10 + center * .08) + hover * .08) * edgeFade * Math.min(1, local * 1.6);
       const size = drawCell * (.65 + wave * .10 + hover * .12) * ease;
       ctx.fillRect(px - size / 2, py - size / 2, size, size);
     }
@@ -169,7 +168,7 @@
     syncMotion();
   };
   const observer = new ResizeObserver(resize); observer.observe(host);
-  window.addEventListener('scroll', queueProgress, { passive: true });
+  window.addEventListener('scroll', updateProgress, { passive: true });
   window.addEventListener('resize', queueProgress, { passive: true });
   host.addEventListener('pointermove', e => { const rect = host.getBoundingClientRect(); pointer = {x:e.clientX - rect.left,y:e.clientY - rect.top}; });
   host.addEventListener('pointerleave', () => { pointer = null; });
