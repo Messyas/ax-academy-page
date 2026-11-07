@@ -19,7 +19,28 @@
 .lg-pattern-secondary-03 { --lg-pattern-image: var(--lg-pattern-secondary-03); }
 .lg-pattern-secondary-04 { --lg-pattern-image: var(--lg-pattern-secondary-04); }
 
-/* O primeiro padr?o marca as divis?es e avan?a discretamente aos lados. */
-.home-band { height: 52px; background: none; opacity: 1; border: 0; }
-.home-band::before { content: ""; position: absolute; inset: 0 -36px; background-color: var(--lg-pattern-ink); -webkit-mask-image: var(--lg-pattern-primary-01); mask-image: var(--lg-pattern-primary-01); -webkit-mask-repeat: repeat; mask-repeat: repeat; -webkit-mask-size: 20px 20px; mask-size: 20px 20px; pointer-events: none; }
-@media(max-width: 720px) { .home-band { height: 40px; } .home-band::before { inset-inline: -16px; -webkit-mask-size: 16px 16px; mask-size: 16px 16px; } }
+/* As faixas centrais usam linhas; o padrão alterna nas laterais. */
+.home-band {
+  height: 30px;
+  border-bottom: 1px solid var(--border);
+  background: repeating-linear-gradient(135deg, transparent 0, transparent 8px, var(--border) 8px, var(--border) 9px);
+  opacity: .7;
+}
+.home-band.pattern-left::before,
+.home-band.pattern-right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(160px, max(0px, calc((100vw - 100%) / 2 - 8px)));
+  background-color: var(--lg-pattern-ink);
+  -webkit-mask-image: var(--lg-pattern-primary-01);
+  mask-image: var(--lg-pattern-primary-01);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-size: 12px 12px;
+  mask-size: 12px 12px;
+  pointer-events: none;
+}
+.home-band.pattern-left::before { right: 100%; }
+.home-band.pattern-right::after { left: 100%; }
