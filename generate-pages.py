@@ -10,7 +10,7 @@ def header(active):
 <header class="site-header"><div class="wrap nav-shell">
   <a class="brand" href="index.html" aria-label="AX Academy — início"><img class="brand-light" src="assets/ax-logo.png" alt="AX Academy"><img class="brand-dark" src="assets/ax-logo-white.png" alt="AX Academy"></a>
   <nav class="nav-links" id="primary-nav" aria-label="Navegação principal">{nav}</nav>
-  <div class="nav-actions"><button class="theme-toggle" data-theme-toggle aria-label="Alternar tema"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg></button><a class="button" href="contato.html">Fale conosco {arrow}</a><button class="menu-toggle" data-menu aria-expanded="false" aria-controls="primary-nav" aria-label="Abrir menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button></div>
+  <div class="nav-actions"><button class="theme-toggle" data-theme-toggle aria-label="Alternar tema"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41"/></svg></button><button class="menu-toggle" data-menu aria-expanded="false" aria-controls="primary-nav" aria-label="Abrir menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button></div>
 </div></header>'''
 
 def footer():
