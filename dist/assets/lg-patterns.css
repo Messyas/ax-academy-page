@@ -1,58 +1,50 @@
-/* Padrão geométrico desenhado com gradientes CSS. */
-:root { --lg-pattern-ink: rgb(26 26 26 / 16%); }
-:root[data-theme="dark"] { --lg-pattern-ink: rgb(255 255 255 / 17%); }
+/* Marcas L/G desenhadas em CSS, em quadrados externos ao conteúdo. */
+:root { --lg-pattern-ink: rgb(26 26 26 / 24%); }
+:root[data-theme="dark"] { --lg-pattern-ink: rgb(255 255 255 / 24%); }
 
-.home-content .closing { isolation: isolate; overflow: hidden; }
+.home-content .closing { isolation: isolate; overflow: visible; }
 .closing-inner { position: relative; z-index: 1; }
-.closing-pattern {
+.closing-side {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  width: min(280px, max(0px, calc((100vw - 100%) / 2 - 12px)));
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   overflow: hidden;
+  contain: paint;
   pointer-events: none;
-  --pattern-cell: 38px;
 }
-
-/* Arcos abertos e hastes compõem as marcas repetidas. */
-.closing-pattern::before,
-.closing-pattern::after {
+.closing-side-left { right: 100%; }
+.closing-side-right { left: 100%; }
+.lg-pattern-mark {
+  position: relative;
+  aspect-ratio: 1;
+  transform: rotate(var(--turn, 0deg));
+}
+.lg-pattern-mark::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background-color: var(--lg-pattern-ink);
+  left: 34%;
+  top: 23%;
+  width: 53%;
+  height: 53%;
+  border: 1.7px solid var(--lg-pattern-ink);
+  border-right-color: transparent;
+  border-radius: 50%;
+  background:
+    linear-gradient(var(--lg-pattern-ink), var(--lg-pattern-ink)) right 55% / 39% 1.7px no-repeat,
+    linear-gradient(var(--lg-pattern-ink), var(--lg-pattern-ink)) right 72% / 1.7px 26% no-repeat;
 }
-.closing-pattern::before {
-  -webkit-mask-image:
-    radial-gradient(circle at 14px 14px, transparent 7px, #000 7.5px 9px, transparent 9.5px),
-    conic-gradient(from 45deg at 14px 14px, transparent 0deg 90deg, #000 90deg 360deg);
-  mask-image:
-    radial-gradient(circle at 14px 14px, transparent 7px, #000 7.5px 9px, transparent 9.5px),
-    conic-gradient(from 45deg at 14px 14px, transparent 0deg 90deg, #000 90deg 360deg);
-  -webkit-mask-size: var(--pattern-cell) var(--pattern-cell);
-  mask-size: var(--pattern-cell) var(--pattern-cell);
-  -webkit-mask-composite: source-in;
-  mask-composite: intersect;
-}
-.closing-pattern::after {
-  background-image: repeating-linear-gradient(90deg, var(--lg-pattern-ink) 0 2px, transparent 2px var(--pattern-cell));
-  background-color: transparent;
-  -webkit-mask-image: repeating-linear-gradient(0deg, #000 0 20px, transparent 20px var(--pattern-cell));
-  mask-image: repeating-linear-gradient(0deg, #000 0 20px, transparent 20px var(--pattern-cell));
-}
-.pattern-teeth { position: absolute; inset: 0; }
-.pattern-teeth::before,
-.pattern-teeth::after {
+.lg-pattern-mark::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background-image: repeating-linear-gradient(0deg, var(--lg-pattern-ink) 0 2px, transparent 2px var(--pattern-cell));
+  left: 10%;
+  top: 10%;
+  width: 19%;
+  height: 64%;
+  border-left: 1.7px solid var(--lg-pattern-ink);
+  border-bottom: 1.7px solid var(--lg-pattern-ink);
 }
-.pattern-teeth::before {
-  background-position: 0 19px;
-  -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px var(--pattern-cell));
-  mask-image: repeating-linear-gradient(90deg, #000 0 9px, transparent 9px var(--pattern-cell));
-}
-.pattern-teeth::after {
-  background-position: 0 13px;
-  -webkit-mask-image: repeating-linear-gradient(90deg, transparent 0 14px, #000 14px 20px, transparent 20px var(--pattern-cell));
-  mask-image: repeating-linear-gradient(90deg, transparent 0 14px, #000 14px 20px, transparent 20px var(--pattern-cell));
-}
+@media(max-width: 1199px) { .closing-side { display: none; } }
