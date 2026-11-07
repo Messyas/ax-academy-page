@@ -68,3 +68,18 @@ html{overflow-x:clip}body{font-family:'LG Text',sans-serif;overflow-x:clip}h1,h2
   .home-page .hero{min-height:100svh}
   .home-page .hero-art::after{background:linear-gradient(90deg,transparent 10%,var(--page) 95%)}
 }
+
+/* A cena acompanha uma rolagem curta e libera a página ao terminar. */
+.intro-sticky{position:relative}
+.has-scroll-intro .intro-scene{height:250svh}
+.has-scroll-intro .intro-sticky{position:sticky;top:0;height:100svh;overflow:hidden}
+.has-scroll-intro .hero{height:100%;min-height:0}
+.hero-copy{opacity:var(--intro-copy-opacity,1);transform:translateY(var(--intro-copy-offset,0px))}
+.hero-art::after{opacity:var(--intro-overlay-opacity,1)}
+@media(prefers-reduced-motion:reduce){
+  .has-scroll-intro .intro-scene{height:auto}
+  .has-scroll-intro .intro-sticky{position:relative;height:auto;overflow:visible}
+  .has-scroll-intro .hero{height:auto;min-height:100svh}
+  .hero-copy{opacity:1;transform:none}
+  .hero-art::after{opacity:1}
+}

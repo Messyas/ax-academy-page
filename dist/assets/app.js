@@ -64,12 +64,48 @@
   if (!canvas) return;
   const host = canvas.parentElement, ctx = canvas.getContext('2d');
   if (!ctx) return;
+  const scene = document.querySelector('[data-intro-scene]');
+  const copy = document.querySelector('.hero-copy');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const cols = 68, rows = 48, mask = new Uint8Array(cols * rows);
+  const bot = new Uint8Array(cols * rows), flow = new Uint8Array(cols * rows);
+  const rectMask = (target, x1, y1, x2, y2, value = 1) => {
+    for (let y = y1; y < y2; y++) for (let x = x1; x < x2; x++) target[y * cols + x] = value;
+  };
+  // Silhuetas de robô e fluxo, construídas na mesma grade do AX.
+  rectMask(bot, 19, 14, 49, 35); rectMask(bot, 16, 20, 19, 29); rectMask(bot, 49, 20, 52, 29);
+  rectMask(bot, 32, 7, 36, 14); rectMask(bot, 30, 5, 38, 9); rectMask(bot, 24, 37, 44, 41);
+  rectMask(bot, 25, 21, 29, 25, 0); rectMask(bot, 39, 21, 43, 25, 0); rectMask(bot, 27, 30, 41, 32, 0);
+  rectMask(flow, 14, 19, 24, 29); rectMask(flow, 29, 6, 39, 16);
+  rectMask(flow, 44, 19, 54, 29); rectMask(flow, 29, 32, 39, 42);
+  rectMask(flow, 23, 22, 45, 26); rectMask(flow, 32, 15, 36, 33);
+  rectMask(flow, 17, 22, 21, 26, 0); rectMask(flow, 32, 9, 36, 13, 0);
+  rectMask(flow, 47, 22, 51, 26, 0); rectMask(flow, 32, 35, 36, 39, 0);
   const image = new Image(); image.src = 'assets/ax-logo.png';
   let width = 0, height = 0, cell = 0, ox = 0, oy = 0, start = 0, frame = 0, pointer = null;
+  let progress = 0, imageReady = false, sceneVisible = true, scrollFrame = 0;
   const rand = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return n - Math.floor(n); };
   const clamp = n => Math.max(0, Math.min(1, n));
+  const mix = (a, b, t) => a + (b - a) * t;
+  const smooth = (a, b, n) => { const t = clamp((n - a) / (b - a)); return t * t * (3 - 2 * t); };
+  const updateProgress = () => {
+    scrollFrame = 0;
+    if (!scene || reduced.matches || !imageReady) progress = 0;
+    else {
+      const bounds = scene.getBoundingClientRect();
+      progress = clamp(-bounds.top / Math.max(1, bounds.height - window.innerHeight));
+    }
+    const fade = smooth(.12, .35, progress);
+    if (copy) {
+      copy.style.setProperty('--intro-copy-opacity', String(1 - fade));
+      copy.style.setProperty('--intro-copy-offset', `${-18 * fade}px`);
+      copy.inert = fade > .98;
+      if (fade > .98) copy.setAttribute('aria-hidden', 'true');
+      else copy.removeAttribute('aria-hidden');
+    }
+    host.style.setProperty('--intro-overlay-opacity', String(1 - smooth(.12, .42, progress)));
+  };
+  const queueProgress = () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateProgress); };
   const resize = () => {
     const rect = host.getBoundingClientRect(); width = rect.width; height = rect.height;
     const dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -83,24 +119,45 @@
     ctx.clearRect(0, 0, width, height);
     const dark = root.dataset.theme === 'dark';
     ctx.fillStyle = dark ? '#ffffff' : '#1a1a1a';
+    const center = smooth(.16, .48, progress);
+    const botMix = smooth(.46, .62, progress);
+    const flowMix = smooth(.68, .82, progress);
+    const fadeOut = 1 - smooth(.85, .99, progress);
+    const centeredCell = Math.min(width / (width <= 720 ? 55 : 70), height / 50);
+    const drawCell = mix(cell, centeredCell, center);
+    const drawX = mix(ox, (width - cols * centeredCell) / 2, center);
+    const rise = height * .11 * smooth(0, .2, progress) * (1 - center);
+    const drawY = mix(oy - rise, (height - rows * centeredCell) / 2, center);
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-      const px = ox + x * cell + cell / 2, py = oy + y * cell + cell / 2;
+      const px = drawX + x * drawCell + drawCell / 2, py = drawY + y * drawCell + drawCell / 2;
       const distance = Math.hypot(x - cols / 2, y - rows / 2);
       const local = reduced.matches ? 1 : clamp((t - distance * .026 - rand(x,y) * .2) / .5);
       if (!local) continue;
       const ease = 1 + 2.7 * Math.pow(local - 1, 3) + 1.7 * Math.pow(local - 1, 2);
       const wave = reduced.matches ? .5 : .5 + .25 * Math.sin(t * .9 + x * .19 + y * .16) + .25 * Math.sin(t * 1.3 + rand(x,y) * 6.28);
-      const hover = pointer ? Math.pow(clamp(1 - Math.hypot(px - pointer.x, py - pointer.y) / (cell * 8)), 2) : 0;
-      const active = mask[y * cols + x];
+      const hover = pointer ? Math.pow(clamp(1 - Math.hypot(px - pointer.x, py - pointer.y) / (drawCell * 8)), 2) : 0;
+      const index = y * cols + x;
+      const active = mix(mix(mask[index], bot[index], botMix), flow[index], flowMix);
       const edge = cols - 2 - (y / rows) * 10;
-      const edgeFade = clamp((edge - x) / 5);
-      ctx.globalAlpha = clamp((active ? .10 + wave * .10 : .018 + wave * .035) + hover * .08) * edgeFade * Math.min(1, local * 1.6);
-      const size = cell * (.65 + wave * .10 + hover * .12) * ease;
+      const edgeFade = mix(clamp((edge - x) / 5), 1, center);
+      const base = .018 + wave * .035;
+      ctx.globalAlpha = clamp(base + active * (.10 + wave * .10 + center * .08) + hover * .08) * edgeFade * fadeOut * Math.min(1, local * 1.6);
+      const size = drawCell * (.65 + wave * .10 + hover * .12) * ease;
       ctx.fillRect(px - size / 2, py - size / 2, size, size);
     }
     ctx.globalAlpha = 1;
   };
   const tick = now => { if (!start) start = now; draw((now - start) / 1000); frame = requestAnimationFrame(tick); };
+  const startAnimation = () => {
+    if (!frame && imageReady && sceneVisible && !reduced.matches && !document.hidden) frame = requestAnimationFrame(tick);
+  };
+  const syncMotion = () => {
+    cancelAnimationFrame(frame); frame = 0;
+    root.classList.toggle('has-scroll-intro', imageReady && !reduced.matches);
+    updateProgress(); resize();
+    if (reduced.matches) draw(100);
+    else startAnimation();
+  };
   image.onload = () => {
     const sample = document.createElement('canvas'); sample.width = cols; sample.height = rows;
     const s = sample.getContext('2d', {willReadFrequently:true});
@@ -108,11 +165,25 @@
     s.drawImage(image, 0, 0, image.width * .31, image.height, 4, 7, 60, 34);
     const pixels = s.getImageData(0, 0, cols, rows).data;
     for (let i = 0; i < mask.length; i++) mask[i] = pixels[i * 4 + 3] > 75 ? 1 : 0;
-    resize(); if (!reduced.matches) frame = requestAnimationFrame(tick);
+    imageReady = true;
+    syncMotion();
   };
   const observer = new ResizeObserver(resize); observer.observe(host);
+  window.addEventListener('scroll', queueProgress, { passive: true });
+  window.addEventListener('resize', queueProgress, { passive: true });
   host.addEventListener('pointermove', e => { const rect = host.getBoundingClientRect(); pointer = {x:e.clientX - rect.left,y:e.clientY - rect.top}; });
   host.addEventListener('pointerleave', () => { pointer = null; });
   new MutationObserver(() => { if (reduced.matches) draw(100); }).observe(root, {attributes:true,attributeFilter:['data-theme']});
-  reduced.addEventListener('change', () => { cancelAnimationFrame(frame); frame = 0; if (reduced.matches) draw(100); else { start = 0; frame = requestAnimationFrame(tick); } });
+  reduced.addEventListener('change', syncMotion);
+  if (scene && 'IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      sceneVisible = entries[0].isIntersecting;
+      if (sceneVisible) startAnimation();
+      else { cancelAnimationFrame(frame); frame = 0; }
+    }).observe(scene);
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { cancelAnimationFrame(frame); frame = 0; }
+    else startAnimation();
+  });
 })();
