@@ -63,3 +63,17 @@
   border-bottom: var(--stroke) solid currentColor;
 }
 @media(max-width: 1199px) { .closing-side { display: none; } }
+
+/* Apoiadores da formação. */
+.supporters { padding: 56px 32px; }
+.supporters h2 { font-size: clamp(2rem, 3vw, 2.8rem); }
+.supporters > p { color: var(--secondary); margin-top: 12px; }
+.supporters-logos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 32px; border-top: 1px solid var(--border); }
+.supporter { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; min-height: 160px; padding: 20px; font-weight: 600; }
+.supporter + .supporter { border-left: 1px solid var(--border); }
+.supporter-ifam { width: 92px; height: 92px; object-fit: contain; }
+.supporter-lg { width: 150px; height: 92px; object-fit: contain; }
+.supporter-lg-dark { display: none; }
+:root[data-theme="dark"] .supporter-lg-light { display: none; }
+:root[data-theme="dark"] .supporter-lg-dark { display: block; }
+@media(max-width: 720px) { .supporters { padding: 44px 20px; } .supporter { min-height: 140px; padding: 12px; } .supporter-ifam { width: 76px; height: 76px; } .supporter-lg { width: 120px; height: 76px; } }

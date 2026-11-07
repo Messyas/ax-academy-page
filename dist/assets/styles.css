@@ -71,7 +71,7 @@ html{overflow-x:clip}body{font-family:'LG Text',sans-serif;overflow-x:clip}h1,h2
 
 /* A cena acompanha uma rolagem curta e libera a página ao terminar. */
 .intro-sticky{position:relative}
-.has-scroll-intro .intro-scene{height:500svh}
+.has-scroll-intro .intro-scene{height:400svh}
 .has-scroll-intro{scroll-snap-type:y proximity}
 .has-scroll-intro .home-content{scroll-snap-align:start}
 .has-scroll-intro .intro-sticky{position:sticky;top:0;height:100svh;overflow:hidden}

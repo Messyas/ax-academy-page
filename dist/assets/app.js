@@ -68,14 +68,7 @@
   const copy = document.querySelector('.hero-copy');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const cols = 68, rows = 48, mask = new Uint8Array(cols * rows);
-  const ifam = new Uint8Array(cols * rows), lg = new Uint8Array(cols * rows), bot = new Uint8Array(cols * rows);
-  const rectMask = (target, x1, y1, x2, y2, value = 1) => {
-    for (let y = y1; y < y2; y++) for (let x = x1; x < x2; x++) target[y * cols + x] = value;
-  };
-  // Silhueta do robô, construída na mesma grade do AX.
-  rectMask(bot, 19, 14, 49, 35); rectMask(bot, 16, 20, 19, 29); rectMask(bot, 49, 20, 52, 29);
-  rectMask(bot, 32, 7, 36, 14); rectMask(bot, 30, 5, 38, 9); rectMask(bot, 24, 37, 44, 41);
-  rectMask(bot, 25, 21, 29, 25, 0); rectMask(bot, 39, 21, 43, 25, 0); rectMask(bot, 27, 30, 41, 32, 0);
+  const ifam = new Uint8Array(cols * rows), lg = new Uint8Array(cols * rows);
   let width = 0, height = 0, cell = 0, ox = 0, oy = 0, start = 0, frame = 0, pointer = null;
   let progress = 0, imageReady = false, sceneVisible = true, scrollFrame = 0;
   const rand = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return n - Math.floor(n); };
@@ -135,9 +128,8 @@
       const index = y * cols + x;
       const delay = rand(x, y) * .025 + clamp(distance / 48) * .02;
       const ifamMix = smooth(.22 + delay, .37 + delay, progress);
-      const lgMix = smooth(.44 + delay, .59 + delay, progress);
-      const botMix = smooth(.66 + delay, .82 + delay, progress);
-      const active = inside ? mix(mix(mix(mask[index], ifam[index], ifamMix), lg[index], lgMix), bot[index], botMix) : 0;
+      const lgMix = smooth(.46 + delay, .76 + delay, progress);
+      const active = inside ? mix(mix(mask[index], ifam[index], ifamMix), lg[index], lgMix) : 0;
       const edge = cols - 2 - (y / rows) * 10;
       const edgeFade = mix(clamp((edge - x) / 5), 1, center);
       const base = .018 + wave * .035;
