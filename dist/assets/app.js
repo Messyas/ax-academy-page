@@ -47,7 +47,7 @@
   document.querySelectorAll('[data-lg-pattern]').forEach(element => patternObserver.observe(element));
 
   const projectContainer = document.querySelector('[data-projects]');
-  if (projectContainer && window.AX_PROJECTS) {
+  if (projectContainer && window.AX_PROJECTS && projectContainer.children.length === 0) {
     window.AX_PROJECTS.forEach((project, index) => {
       const article = document.createElement('article'); article.className = 'project';
       const media = document.createElement('div'); media.className = 'project-image';

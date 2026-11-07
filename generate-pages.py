@@ -43,7 +43,103 @@ course_sections = ''.join(f'''<section class="course-module" id="{i}"><div><span
 course = f'''<div class="course-heading-frame"><div class="home-band" aria-hidden="true"></div><section class="page-heading heading-with-pattern">{side_patterns}<span class="tag">A jornada AX</span><h1>Aprender para automatizar. Criar para transformar.</h1><p class="lead">Uma formação que percorre automação, ciência de dados e inteligência artificial, com ferramentas aplicadas a diferentes desafios.</p></section></div><div class="wrap course-summary"><div class="summary-item"><strong>04</strong><span>módulos</span></div><div class="summary-item"><strong>640 horas</strong><span>de conteúdo</span></div></div><div class="wrap">{course_sections}</div><section class="section wrap"><div class="section-head"><h2>Conhecimento que ganha forma.</h2><p>Veja como a tecnologia se conecta a diferentes contextos no portfólio da AX Academy.</p></div><a class="button" href="portfolio.html">Explorar projetos</a></section>'''
 page('curso.html','Curso','Conheça os módulos e conteúdos da formação em automação da AX Academy.',course)
 
-portfolio = f'''<div class="portfolio-heading-frame"><div class="home-band" aria-hidden="true"></div><section class="page-heading heading-with-pattern">{side_patterns}<span class="tag">Portfólio</span><h1>Ideias que se tornam soluções.</h1><p class="lead">Conheça projetos que exploram automação e dados em diferentes contextos.</p></section><div class="home-band" aria-hidden="true"></div></div><section class="section wrap"><div class="portfolio-grid" data-projects></div><p class="project-note">As imagens dos projetos são provisórias e serão atualizadas.</p><noscript><p>Hanaro: automação da análise de desperdícios no processo produtivo. Synergia: consolidação de dados e pendências de suprimentos. Vigil: classificação de padrões comportamentais. Arumã: automação fiscal de comércio exterior.</p></noscript></section>'''
+projects_data = [
+    {
+        'num': '01',
+        'name': 'Hanaro',
+        'category': 'Automação Industrial',
+        'code_lang': 'Python',
+        'mesh': 'mesh-blue',
+        'mockup_header': 'HANARO · MONITORAMENTO INDUSTRIAL',
+        'chips': [
+            ('Linha SMD', True),
+            ('Desperdício 0%', True),
+            ('Otimização contínua', False),
+            ('Visão computacional', False)
+        ],
+        'progress_label': 'TAXA DE REDUÇÃO DE PERDAS',
+        'progress_val': '-24.8%',
+        'progress_pct': '82%',
+        'footer': '→ FLUXO PRODUTIVO OTIMIZADO',
+        'description': 'Automação da análise de casos de desperdício que acontecem no processo produtivo.',
+        'tags': ['Python', 'BotCity', 'Computer Vision', 'Pandas', 'Docker', 'RPA']
+    },
+    {
+        'num': '02',
+        'name': 'Synergia',
+        'category': 'Supply Chain',
+        'code_lang': 'Python · SQL',
+        'mesh': 'mesh-green',
+        'mockup_header': 'SYNERGIA · GESTÃO DE SUPRIMENTOS',
+        'stats': [
+            ('ENTREGAS', 'filled-emerald', 8, 10, '84%'),
+            ('ESTOQUE', 'filled-cyan', 10, 10, '100% OK'),
+            ('PENDÊNCIAS', 'filled-violet', 2, 10, 'BAIXO')
+        ],
+        'footer': '▲ ERP SAP SINCRONIZADO',
+        'description': 'Consolidação de dados e acompanhamento de pendências de suprimentos.',
+        'tags': ['Python', 'FastAPI', 'ETL', 'PostgreSQL', 'Dashboards', 'SAP']
+    },
+    {
+        'num': '03',
+        'name': 'Vigil',
+        'category': 'Machine Learning',
+        'code_lang': 'Machine Learning',
+        'mesh': 'mesh-purple',
+        'mockup_header': 'VIGIL · PADRÕES COMPORTAMENTAIS',
+        'chips': [
+            ('Cluster #04', True),
+            ('Desvio < 0.05', True),
+            ('Padrão regular', False),
+            ('Detecção anomalia', False)
+        ],
+        'stats': [
+            ('CONFIANÇA', 'filled-pink', 9, 10, '98.4%')
+        ],
+        'footer': '● INFERÊNCIA EM TEMPO REAL',
+        'description': 'Identificação de parâmetros para classificação de padrões comportamentais.',
+        'tags': ['Python', 'TensorFlow', 'Scikit-learn', 'Clusterização', 'Análise Preditiva']
+    },
+    {
+        'num': '04',
+        'name': 'Arumã',
+        'category': 'Comex & Fiscal',
+        'code_lang': 'Hiperautomação',
+        'mesh': 'mesh-amber',
+        'mockup_header': 'ARUMÃ · FISCAL & COMÉRCIO EXTERIOR',
+        'stats': [
+            ('DU-E / DI', 'filled-amber', 9, 10, '92%'),
+            ('RECEITA', 'filled-emerald', 10, 10, 'VALIDADO'),
+            ('AUDITORIA', 'filled-cyan', 10, 10, 'APROVADO')
+        ],
+        'footer': '✓ DESEMBARAÇO AUTOMATIZADO',
+        'description': 'Automação de processos voltados à área fiscal de comércio exterior.',
+        'tags': ['Python', 'Playwright', 'FastAPI', 'OCR', 'Docker', 'Comex']
+    }
+]
+
+def render_project_card(p):
+    mesh = p['mesh']
+    code_badge = f'<div class="project-code-badge"><span class="code-bracket">&lt;&gt;</span> {p["code_lang"]}</div>'
+    mockup_inner = f'<div class="mockup-header">{p["mockup_header"]}</div>'
+    if 'chips' in p:
+        chips_html = ''.join(f'<span class="mockup-chip {"solid" if solid else "outline"}">{txt}</span>' for txt, solid in p['chips'])
+        mockup_inner += f'<div class="mockup-chips">{chips_html}</div>'
+    if 'stats' in p:
+        for label, color, count, total, val in p['stats']:
+            segs = ''.join(f'<span class="mockup-stat-segment {color if i < count else ""}"></span>' for i in range(total))
+            mockup_inner += f'<div class="mockup-stat-row"><span class="mockup-stat-label">{label}</span><div class="mockup-stat-segments">{segs}</div><span class="mockup-stat-val">{val}</span></div>'
+    if 'progress_label' in p:
+        mockup_inner += f'''<div class="mockup-progress"><div class="mockup-progress-label"><span>{p["progress_label"]}</span><span>{p["progress_val"]}</span></div><div class="mockup-progress-track"><div class="mockup-progress-bar" style="width: {p["progress_pct"]};"></div></div></div>'''
+    if 'footer' in p:
+        mockup_inner += f'<div class="mockup-footer">{p["footer"]}</div>'
+    preview = f'''<div class="project-preview">{code_badge}<div class="project-mockup">{mockup_inner}</div></div>'''
+    tags_html = ''.join(f'<span class="project-tag">{t}</span>' for t in p['tags'])
+    content = f'''<div class="project-content"><div class="project-title-row"><h2 class="project-title">{p["name"]}</h2><span class="project-badge"><span class="project-badge-num">{p["num"]}</span> {p["category"]}</span></div><p class="project-desc">{p["description"]}</p><div class="project-tags">{tags_html}</div></div>'''
+    return f'''<article class="project {mesh}">{preview}{content}</article>'''
+
+project_cards_html = ''.join(render_project_card(p) for p in projects_data)
+portfolio = f'''<div class="home-content"><div class="home-band" aria-hidden="true"></div><section class="page-heading heading-with-pattern">{side_patterns}<span class="tag">Portfólio</span><h1>Ideias que se tornam soluções.</h1><p class="lead">Conheça projetos que exploram automação e dados em diferentes contextos.</p></section><div class="home-band" aria-hidden="true"></div><section class="section portfolio-section"><div class="portfolio-grid" data-projects>{project_cards_html}</div><p class="project-note">Projetos desenvolvidos no ecossistema de formação tecnológica da AX Academy.</p><noscript><p>Hanaro: automação da análise de desperdícios no processo produtivo. Synergia: consolidação de dados e pendências de suprimentos. Vigil: classificação de padrões comportamentais. Arumã: automação fiscal de comércio exterior.</p></noscript></section><div class="home-band" aria-hidden="true"></div><section class="closing">{side_patterns}<div class="closing-inner"><div><h2>Transforme desafios em soluções.</h2><p>Conheça a estrutura completa da formação em automação da AX Academy.</p></div><a class="button" href="curso.html">Ver o curso</a></div></section><div class="home-band" aria-hidden="true"></div></div>'''
 page('portfolio.html','Portfólio','Conheça os projetos Hanaro, Synergia, Vigil e Arumã.',portfolio,'<script src="assets/projects.js" defer></script>')
 
 contact = '''<section class="wrap page-heading"><span class="tag">Contato</span><h1>Vamos conversar?</h1><p class="lead">Entre em contato para saber mais sobre a AX Academy e sua formação em automação.</p></section><section class="section wrap"><div class="contact-layout"><article class="contact-card"><h2>E-mail</h2><span class="contact-value">contato@exemplo.com</span><p>Canal de contato da AX Academy.</p><span class="notice">E-mail de exemplo · será atualizado</span></article><article class="contact-card"><h2>Onde estamos</h2><span class="contact-value">Polo de Inovação do IFAM</span><p>Campus Distrito Industrial (CMDI)</p></article></div></section>'''
