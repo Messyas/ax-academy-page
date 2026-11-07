@@ -68,7 +68,7 @@
   const copy = document.querySelector('.hero-copy');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const cols = 68, rows = 48, mask = new Uint8Array(cols * rows);
-  const bot = new Uint8Array(cols * rows);
+  const ifam = new Uint8Array(cols * rows), lg = new Uint8Array(cols * rows), bot = new Uint8Array(cols * rows);
   const rectMask = (target, x1, y1, x2, y2, value = 1) => {
     for (let y = y1; y < y2; y++) for (let x = x1; x < x2; x++) target[y * cols + x] = value;
   };
@@ -76,7 +76,6 @@
   rectMask(bot, 19, 14, 49, 35); rectMask(bot, 16, 20, 19, 29); rectMask(bot, 49, 20, 52, 29);
   rectMask(bot, 32, 7, 36, 14); rectMask(bot, 30, 5, 38, 9); rectMask(bot, 24, 37, 44, 41);
   rectMask(bot, 25, 21, 29, 25, 0); rectMask(bot, 39, 21, 43, 25, 0); rectMask(bot, 27, 30, 41, 32, 0);
-  const image = new Image(); image.src = 'assets/ax-logo.png';
   let width = 0, height = 0, cell = 0, ox = 0, oy = 0, start = 0, frame = 0, pointer = null;
   let progress = 0, imageReady = false, sceneVisible = true, scrollFrame = 0;
   const rand = (x, y) => { const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return n - Math.floor(n); };
@@ -90,7 +89,7 @@
       const bounds = scene.getBoundingClientRect();
       progress = clamp(-bounds.top / Math.max(1, bounds.height - window.innerHeight));
     }
-    const fade = smooth(.14, .38, progress);
+    const fade = smooth(.10, .25, progress);
     if (copy) {
       copy.style.setProperty('--intro-copy-opacity', String(1 - fade));
       copy.style.setProperty('--intro-copy-offset', `${-18 * fade}px`);
@@ -98,7 +97,7 @@
       if (fade > .98) copy.setAttribute('aria-hidden', 'true');
       else copy.removeAttribute('aria-hidden');
     }
-    host.style.setProperty('--intro-overlay-opacity', String(1 - smooth(.14, .48, progress)));
+    host.style.setProperty('--intro-overlay-opacity', String(1 - smooth(.10, .30, progress)));
   };
   const queueProgress = () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateProgress); };
   const resize = () => {
@@ -114,7 +113,7 @@
     ctx.clearRect(0, 0, width, height);
     const dark = root.dataset.theme === 'dark';
     ctx.fillStyle = dark ? '#ffffff' : '#1a1a1a';
-    const center = smooth(.14, .50, progress);
+    const center = smooth(.10, .29, progress);
     const centeredCell = Math.min(width / (width <= 720 ? 55 : 70), height / 50);
     const drawCell = mix(cell, centeredCell, center);
     const drawX = mix(ox, (width - cols * centeredCell) / 2, center);
@@ -134,9 +133,11 @@
       const hover = pointer ? Math.pow(clamp(1 - Math.hypot(px - pointer.x, py - pointer.y) / (drawCell * 8)), 2) : 0;
       const inside = x >= 0 && x < cols && y >= 0 && y < rows;
       const index = y * cols + x;
-      const delay = rand(x, y) * .07 + clamp(distance / 48) * .04;
-      const botMix = smooth(.32 + delay, .76 + delay, progress);
-      const active = inside ? mix(mask[index], bot[index], botMix) : 0;
+      const delay = rand(x, y) * .025 + clamp(distance / 48) * .02;
+      const ifamMix = smooth(.22 + delay, .37 + delay, progress);
+      const lgMix = smooth(.44 + delay, .59 + delay, progress);
+      const botMix = smooth(.66 + delay, .82 + delay, progress);
+      const active = inside ? mix(mix(mix(mask[index], ifam[index], ifamMix), lg[index], lgMix), bot[index], botMix) : 0;
       const edge = cols - 2 - (y / rows) * 10;
       const edgeFade = mix(clamp((edge - x) / 5), 1, center);
       const base = .018 + wave * .035;
@@ -157,16 +158,38 @@
     if (reduced.matches) draw(100);
     else startAnimation();
   };
-  image.onload = () => {
+  const loadImage = src => new Promise(resolve => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(null);
+    image.src = src;
+  });
+  Promise.all([
+    loadImage('assets/ax-logo.png'),
+    loadImage('assets/ifam-logo.png'),
+    loadImage('assets/lg-mosaic.png'),
+  ]).then(([axImage, ifamImage, lgImage]) => {
+    if (!axImage) return;
     const sample = document.createElement('canvas'); sample.width = cols; sample.height = rows;
     const s = sample.getContext('2d', {willReadFrequently:true});
     // A primeira parte da imagem original contém apenas o símbolo AX.
-    s.drawImage(image, 0, 0, image.width * .31, image.height, 4, 7, 60, 34);
-    const pixels = s.getImageData(0, 0, cols, rows).data;
-    for (let i = 0; i < mask.length; i++) mask[i] = pixels[i * 4 + 3] > 75 ? 1 : 0;
+    s.drawImage(axImage, 0, 0, axImage.width * .31, axImage.height, 4, 7, 60, 34);
+    const readMask = (target, lightOnly = false) => {
+      const pixels = s.getImageData(0, 0, cols, rows).data;
+      for (let i = 0; i < target.length; i++) {
+        const offset = i * 4;
+        target[i] = pixels[offset + 3] > 75 && (!lightOnly || pixels[offset] + pixels[offset + 1] + pixels[offset + 2] > 360) ? 1 : 0;
+      }
+      s.clearRect(0, 0, cols, rows);
+    };
+    readMask(mask);
+    if (ifamImage) { s.drawImage(ifamImage, 14, 4, 40, 40); readMask(ifam); }
+    else ifam.set(mask);
+    if (lgImage) { s.drawImage(lgImage, 3, 7, 62, 34); readMask(lg, true); }
+    else lg.set(ifam);
     imageReady = true;
     syncMotion();
-  };
+  });
   const observer = new ResizeObserver(resize); observer.observe(host);
   window.addEventListener('scroll', updateProgress, { passive: true });
   window.addEventListener('resize', queueProgress, { passive: true });
