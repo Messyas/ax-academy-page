@@ -55,7 +55,6 @@
   };
   const draw = t => {
     ctx.clearRect(0, 0, width, height);
-    const dark = root.dataset.theme === 'dark';
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
       const px = ox + x * cell + cell / 2, py = oy + y * cell + cell / 2;
       const distance = Math.hypot(x - cols / 2, y - rows / 2);
@@ -65,8 +64,8 @@
       const wave = reduced.matches ? .5 : .5 + .25 * Math.sin(t * .9 + x * .19 + y * .16) + .25 * Math.sin(t * 1.3 + rand(x,y) * 6.28);
       const hover = pointer ? Math.pow(clamp(1 - Math.hypot(px - pointer.x, py - pointer.y) / (cell * 8)), 2) : 0;
       const active = mask[y * cols + x];
-      ctx.fillStyle = active ? (dark ? '#f0436b' : '#a50034') : (dark ? '#f5f5f5' : '#1a1a1a');
-      ctx.globalAlpha = clamp((active ? .5 + wave * .4 : .06 + wave * .12) + hover * .3) * Math.min(1, local * 1.6);
+      ctx.fillStyle = '#ffffff';
+      ctx.globalAlpha = clamp((active ? .65 + wave * .35 : .025 + wave * .07) + hover * .25) * Math.min(1, local * 1.6);
       const size = cell * (.57 + wave * .16 + hover * .23) * ease;
       ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(px - size / 2, py - size / 2, size, size, size * .2); else ctx.rect(px - size / 2, py - size / 2, size, size); ctx.fill();
     }
@@ -77,7 +76,7 @@
     const sample = document.createElement('canvas'); sample.width = cols; sample.height = rows;
     const s = sample.getContext('2d', {willReadFrequently:true});
     // A primeira parte da imagem original contém apenas o símbolo AX.
-    s.drawImage(image, 0, 0, image.width * .31, image.height, 10, 9, 48, 30);
+    s.drawImage(image, 0, 0, image.width * .31, image.height, 4, 7, 60, 34);
     const pixels = s.getImageData(0, 0, cols, rows).data;
     for (let i = 0; i < mask.length; i++) mask[i] = pixels[i * 4 + 3] > 75 ? 1 : 0;
     resize(); if (!reduced.matches) frame = requestAnimationFrame(tick);
