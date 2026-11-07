@@ -1,17 +1,19 @@
 /* Marcas L/G desenhadas em CSS, em quadrados externos ao conteúdo. */
-:root { --lg-pattern-ink: rgb(26 26 26 / 24%); }
-:root[data-theme="dark"] { --lg-pattern-ink: rgb(255 255 255 / 24%); }
+:root { --lg-pattern-ink: var(--text); }
 
 .home-content .closing { isolation: isolate; overflow: visible; }
 .closing-inner { position: relative; z-index: 1; }
 .closing-side {
   position: absolute;
-  top: 50%;
-  width: min(280px, max(0px, calc((100vw - 100%) / 2 - 12px)));
-  aspect-ratio: 1;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
+  width: max(0px, calc((100vw - 100%) / 2 - 12px));
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--pattern-columns, 1), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--pattern-rows, 1), minmax(0, 1fr));
+  place-items: center;
+  color: var(--lg-pattern-ink);
+  opacity: .26;
   overflow: hidden;
   contain: paint;
   pointer-events: none;
@@ -20,22 +22,35 @@
 .closing-side-right { left: 100%; }
 .lg-pattern-mark {
   position: relative;
-  aspect-ratio: 1;
+  width: var(--motif-size);
+  height: var(--motif-size);
+  --stroke: 2.1px;
   transform: rotate(var(--turn, 0deg));
+  filter: blur(.12px) drop-shadow(0 .4px .55px currentColor);
 }
-.lg-pattern-mark::before {
-  content: "";
+.lg-pattern-g {
   position: absolute;
   left: 34%;
   top: 23%;
   width: 53%;
   height: 53%;
-  border: 1.7px solid var(--lg-pattern-ink);
-  border-right-color: transparent;
+  clip-path: polygon(0 0, 65% 0, 65% 40%, 100% 40%, 100% 100%, 0 100%);
+}
+.lg-pattern-g::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: var(--stroke) solid currentColor;
   border-radius: 50%;
-  background:
-    linear-gradient(var(--lg-pattern-ink), var(--lg-pattern-ink)) right 55% / 39% 1.7px no-repeat,
-    linear-gradient(var(--lg-pattern-ink), var(--lg-pattern-ink)) right 72% / 1.7px 26% no-repeat;
+}
+.lg-pattern-g::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - var(--stroke) / 2);
+  right: 0;
+  width: 44%;
+  height: var(--stroke);
+  background: currentColor;
 }
 .lg-pattern-mark::after {
   content: "";
@@ -44,7 +59,7 @@
   top: 10%;
   width: 19%;
   height: 64%;
-  border-left: 1.7px solid var(--lg-pattern-ink);
-  border-bottom: 1.7px solid var(--lg-pattern-ink);
+  border-left: var(--stroke) solid currentColor;
+  border-bottom: var(--stroke) solid currentColor;
 }
 @media(max-width: 1199px) { .closing-side { display: none; } }

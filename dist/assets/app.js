@@ -23,6 +23,29 @@
     }
   });
 
+  const fitPattern = element => {
+    const { width, height } = element.getBoundingClientRect();
+    if (width < 1 || height < 1) return;
+    const columns = Math.max(1, Math.round(width / 40));
+    const rows = Math.max(1, Math.round(height / 40));
+    element.style.setProperty('--pattern-columns', columns);
+    element.style.setProperty('--pattern-rows', rows);
+    element.style.setProperty('--motif-size', `${Math.min(width / columns, height / rows)}px`);
+    if (element.dataset.patternGrid === `${columns}:${rows}`) return;
+    element.dataset.patternGrid = `${columns}:${rows}`;
+    const marks = document.createDocumentFragment();
+    for (let row = 0; row < rows; row++) for (let column = 0; column < columns; column++) {
+      const mark = document.createElement('i');
+      mark.className = 'lg-pattern-mark';
+      mark.style.setProperty('--turn', `${[[0, 90], [270, 180]][row % 2][column % 2]}deg`);
+      const g = document.createElement('span'); g.className = 'lg-pattern-g';
+      mark.append(g); marks.append(mark);
+    }
+    element.replaceChildren(marks);
+  };
+  const patternObserver = new ResizeObserver(entries => entries.forEach(entry => fitPattern(entry.target)));
+  document.querySelectorAll('[data-lg-pattern]').forEach(element => patternObserver.observe(element));
+
   const projectContainer = document.querySelector('[data-projects]');
   if (projectContainer && window.AX_PROJECTS) {
     window.AX_PROJECTS.forEach((project, index) => {
