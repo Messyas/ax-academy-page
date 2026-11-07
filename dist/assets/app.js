@@ -51,9 +51,9 @@
     const rect = host.getBoundingClientRect(); width = rect.width; height = rect.height;
     const dpr = Math.min(devicePixelRatio || 1, 2); canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const mobile = width <= 720;
-    cell = mobile ? Math.max(width / 58, height / 90) : Math.max(width / 84, height / 39);
+    cell = Math.max(width / (mobile ? 58 : 84), height / 34);
     ox = width * (mobile ? .30 : .27) - (cols * cell) / 2;
-    oy = height * (mobile ? .36 : .5) - (rows * cell) / 2;
+    oy = (height - rows * cell) / 2;
     if (reduced.matches) draw(100);
   };
   const draw = t => {

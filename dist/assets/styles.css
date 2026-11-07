@@ -57,3 +57,13 @@ html{overflow-x:clip}body{font-family:'LG Text',sans-serif;overflow-x:clip}h1,h2
   .hero-art::after{inset:0;width:auto;height:auto;background:linear-gradient(180deg,transparent 5%,var(--page) 68%)}
   .hero-copy{width:100%;padding:30px 24px 64px}
 }
+
+/* A navegação flutua sobre o mosaico, que preenche a altura da tela. */
+.site-header .nav-shell{width:min(792px,calc(100% - 80px))}
+.home-page .site-header{position:absolute;inset:0 0 auto;z-index:10}
+.home-page .hero{min-height:100svh}
+@media(max-width:720px){
+  .site-header .nav-shell{width:calc(100% - 32px)}
+  .home-page .hero{min-height:100svh}
+  .home-page .hero-art::after{background:linear-gradient(90deg,transparent 10%,var(--page) 95%)}
+}
