@@ -20,7 +20,7 @@ def footer():
 def page(filename, title, description, body, extra=''):
     theme = "try{var t=localStorage.getItem('ax-academy-theme');document.documentElement.dataset.theme=t==='dark'||t==='light'?t:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){document.documentElement.dataset.theme='light'}"
     body_class = ' class="home-page"' if filename == 'index.html' else ''
-    html = f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><title>{title} | AX Academy</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><script>{theme}</script><link rel="stylesheet" href="assets/styles.css"></head><body{body_class}>{header(filename)}<main id="conteudo">{body}</main>{footer()}{extra}<script src="assets/app.js" defer></script></body></html>'''
+    html = f'''<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="{description}"><title>{title} | AX Academy</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><script>{theme}</script><link rel="stylesheet" href="assets/styles.css"><link rel="stylesheet" href="assets/lg-patterns.css"></head><body{body_class}>{header(filename)}<main id="conteudo">{body}</main>{footer()}{extra}<script src="assets/app.js" defer></script></body></html>'''
     (out / filename).write_text(html, encoding='utf-8')
 
 modules = [
