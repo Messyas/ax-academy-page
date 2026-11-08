@@ -1,7 +1,0 @@
-﻿__pycache__/
-*.py[cod]
-.playwright-mcp/
-playwright-report/
-test-results/
-.DS_Store
-Thumbs.db
