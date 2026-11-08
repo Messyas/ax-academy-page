@@ -26,6 +26,27 @@
   const fitPattern = element => {
     const { width, height } = element.getBoundingClientRect();
     if (width < 1 || height < 1) return;
+    if (element.dataset.lgPattern === 'g') {
+      const rows = Math.max(3, Math.round(height / 27));
+      const size = height / rows;
+      let columns = Math.max(2, Math.ceil(width / size));
+      if (columns % 2 !== 0) columns += 1;
+      element.style.setProperty('--pattern-columns', columns);
+      element.style.setProperty('--pattern-rows', rows);
+      element.style.setProperty('--motif-size', `${size}px`);
+      if (element.dataset.patternGrid === `${columns}:${rows}`) return;
+      element.dataset.patternGrid = `${columns}:${rows}`;
+      const marks = document.createDocumentFragment();
+      for (let row = 0; row < rows; row++) for (let column = 0; column < columns; column++) {
+        const mark = document.createElement('i');
+        mark.className = 'lg-g-pattern-mark';
+        mark.style.setProperty('--turn', `${[[90, 0], [270, 180]][row % 2][column % 2]}deg`);
+        mark.style.setProperty('--flip', column % 2 === 0 ? '-1' : '1');
+        marks.append(mark);
+      }
+      element.replaceChildren(marks);
+      return;
+    }
     const columns = Math.max(1, Math.round(width / 40));
     const rows = Math.max(1, Math.round(height / 40));
     element.style.setProperty('--pattern-columns', columns);
@@ -48,15 +69,116 @@
 
   const projectContainer = document.querySelector('[data-projects]');
   if (projectContainer && window.AX_PROJECTS && projectContainer.children.length === 0) {
-    window.AX_PROJECTS.forEach((project, index) => {
-      const article = document.createElement('article'); article.className = 'project';
-      const media = document.createElement('div'); media.className = 'project-image';
-      const image = document.createElement('img'); image.src = project.image; image.alt = project.imageAlt; image.loading = 'lazy'; media.append(image);
-      const top = document.createElement('div'); top.className = 'project-top';
-      const title = document.createElement('h2'); title.textContent = project.name;
-      const number = document.createElement('span'); number.className = 'project-number'; number.textContent = String(index + 1).padStart(2, '0');
-      const desc = document.createElement('p'); desc.textContent = project.description;
-      top.append(title, number); article.append(media, top, desc); projectContainer.append(article);
+    window.AX_PROJECTS.forEach(project => {
+      const article = document.createElement('article');
+      article.className = `project ${project.meshTheme || 'mesh-blue'}`;
+
+      const preview = document.createElement('div');
+      preview.className = 'project-preview';
+
+      const codeBadge = document.createElement('div');
+      codeBadge.className = 'project-code-badge';
+      codeBadge.innerHTML = `<span class="code-bracket">&lt;&gt;</span> ${project.codeLang || 'Python'}`;
+      preview.appendChild(codeBadge);
+
+      const mockup = document.createElement('div');
+      mockup.className = 'project-mockup';
+
+      const header = document.createElement('div');
+      header.className = 'mockup-header';
+      header.textContent = project.mockupTitle || project.name;
+      mockup.appendChild(header);
+
+      if (project.chips && project.chips.length) {
+        const chipsWrap = document.createElement('div');
+        chipsWrap.className = 'mockup-chips';
+        project.chips.forEach(c => {
+          const chip = document.createElement('span');
+          chip.className = `mockup-chip ${c.solid ? 'solid' : 'outline'}`;
+          chip.textContent = c.text;
+          chipsWrap.appendChild(chip);
+        });
+        mockup.appendChild(chipsWrap);
+      }
+
+      if (project.stats && project.stats.length) {
+        project.stats.forEach(s => {
+          const row = document.createElement('div');
+          row.className = 'mockup-stat-row';
+          const label = document.createElement('span');
+          label.className = 'mockup-stat-label';
+          label.textContent = s.label;
+          const segments = document.createElement('div');
+          segments.className = 'mockup-stat-segments';
+          for (let i = 0; i < (s.total || 10); i++) {
+            const seg = document.createElement('span');
+            seg.className = `mockup-stat-segment ${i < s.count ? s.color : ''}`;
+            segments.appendChild(seg);
+          }
+          const val = document.createElement('span');
+          val.className = 'mockup-stat-val';
+          val.textContent = s.val;
+          row.append(label, segments, val);
+          mockup.appendChild(row);
+        });
+      }
+
+      if (project.progress) {
+        const prog = document.createElement('div');
+        prog.className = 'mockup-progress';
+        prog.innerHTML = `
+          <div class="mockup-progress-label">
+            <span>${project.progress.label}</span>
+            <span>${project.progress.valText}</span>
+          </div>
+          <div class="mockup-progress-track">
+            <div class="mockup-progress-bar" style="width: ${project.progress.percent}%;"></div>
+          </div>
+        `;
+        mockup.appendChild(prog);
+      }
+
+      if (project.footer) {
+        const foot = document.createElement('div');
+        foot.className = 'mockup-footer';
+        foot.textContent = project.footer;
+        mockup.appendChild(foot);
+      }
+
+      preview.appendChild(mockup);
+
+      const content = document.createElement('div');
+      content.className = 'project-content';
+
+      const titleRow = document.createElement('div');
+      titleRow.className = 'project-title-row';
+
+      const title = document.createElement('h2');
+      title.className = 'project-title';
+      title.textContent = project.name;
+
+      const badge = document.createElement('span');
+      badge.className = 'project-badge';
+      badge.innerHTML = `<span class="project-badge-num">${project.num || ''}</span> ${project.category || ''}`;
+
+      titleRow.append(title, badge);
+
+      const desc = document.createElement('p');
+      desc.className = 'project-desc';
+      desc.textContent = project.description;
+
+      const tagsWrap = document.createElement('div');
+      tagsWrap.className = 'project-tags';
+      (project.tags || []).forEach(t => {
+        const tag = document.createElement('span');
+        tag.className = 'project-tag';
+        tag.textContent = t;
+        tagsWrap.appendChild(tag);
+      });
+
+      content.append(titleRow, desc, tagsWrap);
+      article.append(preview, content);
+      projectContainer.appendChild(article);
     });
   }
 

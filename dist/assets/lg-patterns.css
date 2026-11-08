@@ -73,6 +73,55 @@
 .course-heading-frame { border-bottom: 1px solid var(--border); }
 @media(max-width: 720px) { .portfolio-heading-frame, .course-heading-frame { width: calc(100% - 32px); } .portfolio-heading-frame .page-heading, .course-heading-frame .page-heading { padding: 48px 20px 42px; } }
 
+/* Padrão contínuo de Gs conectados em CSS no retângulo superior atrás da navbar. */
+.site-header .nav-shell {
+  position: relative;
+  z-index: 1;
+}
+.header-pattern {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--pattern-columns, 1), var(--motif-size, 36px));
+  grid-template-rows: repeat(var(--pattern-rows, 1), var(--motif-size, 36px));
+  justify-content: center;
+  align-content: center;
+  color: var(--lg-pattern-ink);
+  opacity: .24;
+  overflow: hidden;
+  contain: paint;
+  pointer-events: none;
+}
+.home-page .header-pattern {
+  display: none;
+}
+.lg-g-pattern-mark {
+  position: relative;
+  width: var(--motif-size);
+  height: var(--motif-size);
+  --stroke: 1.65px;
+  transform: rotate(var(--turn, 0deg)) scaleY(var(--flip, 1));
+  filter: blur(.1px) drop-shadow(0 .3px .45px currentColor);
+}
+.lg-g-pattern-mark::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--stroke) / -2);
+  border: var(--stroke) solid currentColor;
+  border-radius: 50%;
+  clip-path: polygon(-10% -10%, 50% -10%, 50% 50%, 110% 50%, 110% 110%, -10% 110%);
+}
+.lg-g-pattern-mark::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - var(--stroke) / 2);
+  right: calc(var(--stroke) / -2);
+  width: calc(35% + var(--stroke) / 2);
+  height: var(--stroke);
+  background: currentColor;
+}
+
 /* Apoiadores da formação. */
 .supporters { padding: 56px 32px; }
 .supporters h2 { font-size: clamp(2rem, 3vw, 2.8rem); }
