@@ -5,7 +5,7 @@
 }
 
 :root {
-  --brand: #a50034;
+  --brand: #e7194a;
   --brand-hover: #850029;
   --page: #f4f2ee;
   --surface: #fff;
@@ -30,6 +30,13 @@
   --inverse: #fff;
   --shadow: 0 12px 36px rgb(0 0 0 / 26%);
   color-scheme: dark
+}
+
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: none !important;
 }
 
 * {
@@ -153,6 +160,10 @@ img {
 .nav-links a[aria-current=page] {
   color: var(--text);
   background: var(--page)
+}
+
+.nav-links a[aria-current=page] {
+  transition: none
 }
 
 .nav-actions {
@@ -2193,3 +2204,13 @@ body:not(.home-page) .site-header {
 .footer-credit-link { color: inherit; text-decoration: none; }
 .footer-credit-link:hover, .footer-credit-link:focus-visible { color: var(--brand); }
 .footer-credit-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 2px; }
+
+/* Project artwork reaches the edges of each grid cell. */
+.portfolio-grid .project { padding: 0; }
+.portfolio-grid .project-preview { height: auto; aspect-ratio: 16 / 9; padding: 0; border: 0; border-radius: 0; background: #fff; }
+.portfolio-grid .project-preview::before { content: none; }
+.portfolio-grid .project-preview img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 12%; }
+.portfolio-grid .project-content { padding: 24px; }
+
+/* Technology badges follow the active theme. */
+.portfolio-grid .project-tag { background: var(--surface); }

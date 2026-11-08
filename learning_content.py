@@ -36,12 +36,11 @@ def enrich_home(body):
       <ol class="learning-journey">
         <li><h3>Entenda o desafio</h3><p>Observe o processo, reconheça etapas repetitivas e descubra onde a automação pode ajudar.</p></li>
         <li><h3>Dê forma à solução</h3><p>Crie robôs com Python, explore dados e combine serviços para transformar uma ideia em um fluxo.</p></li>
-        <li><h3>Conecte com a prática</h3><p>Conheça aplicações na indústria, em suprimentos, em padrões comportamentais e na área fiscal.</p></li>
+        <li><h3>Conecte com a prática</h3><p>Conheça aplicações na indústria e em suprimentos.</p></li>
       </ol>
-      <a class="learning-story-link" href="portfolio.html">Conheça Hanaro, Synergia, Vigil e Arumã</a>
     </section>'''
     technologies = technology_strip(
-        ['Python', 'BotCity', 'Playwright', 'Google Cloud', 'Docker', 'FastAPI',
+        ['Python', 'Google Cloud', 'Docker', 'FastAPI',
         'TensorFlow', 'MLflow', 'n8n', 'CrewAI', 'LangGraph', 'LangChain'],
         'Tecnologias da formação AX Academy', 'home-technologies-title')
     marker = '<section class="section home-modules">'
@@ -50,55 +49,14 @@ def enrich_home(body):
     return body.replace(marker, story + technologies + marker, 1)
 
 
-MODULE_PRESENTATIONS = [
-    {
-        'tools': ['Python', 'BotCity', 'Playwright', 'PyAutoGUI', 'Google Cloud'],
-        'intro': 'Da tarefa manual ao primeiro robô. Aprenda a automatizar ações no navegador e no desktop, conectando a execução a serviços que já fazem parte do trabalho.',
-        'groups': [
-            ('Automatizar tarefas', 'Bibliotecas Python, robôs, coleta de informações e interação com interfaces web e desktop.'),
-            ('Conectar serviços', 'Integrações com Telegram, WhatsApp, Gmail e Google Cloud.'),
-        ],
-    },
-    {
-        'tools': ['Python', 'TensorFlow', 'Keras', 'MLflow'],
-        'intro': 'Dos dados às decisões. Prepare informações, investigue padrões e construa modelos, acompanhando seu desempenho e as mudanças nos dados ao longo do tempo.',
-        'groups': [
-            ('Investigar e preparar', 'CRISP-DM, análise exploratória, limpeza de dados e pré-processamento.'),
-            ('Modelar e acompanhar', 'Classificação, regressão, clusterização, NLP, redes neurais e monitoramento de modelos.'),
-        ],
-    },
-    {
-        'tools': ['Docker', 'FastAPI', 'BotCity', 'SmartOffice'],
-        'intro': 'Do robô ao processo completo. Combine automações, serviços e regras de negócio para conectar etapas e acompanhar o que acontece em cada execução.',
-        'groups': [
-            ('Desenhar o processo', 'BPMN e integração de ferramentas para estruturar fluxos de ponta a ponta.'),
-            ('Colocar em operação', 'Docker, APIs com FastAPI, SmartOffice, BotCity e logging.'),
-        ],
-    },
-    {
-        'tools': ['n8n', 'CrewAI', 'LangGraph', 'LangChain'],
-        'intro': 'Dos fluxos aos agentes. Explore como conectar modelos, ferramentas e etapas de trabalho para construir sistemas com agentes inteligentes.',
-        'groups': [
-            ('Orquestrar fluxos', 'Conexões e automações com n8n, combinando serviços em uma mesma jornada.'),
-            ('Construir com agentes', 'CrewAI, LangGraph e LangChain para organizar ferramentas e etapas de execução.'),
-        ],
-    },
-]
-
-
 def render_course_modules(modules):
     sections = []
-    for index, ((name, hours, description, topics, suggestion), presentation) in enumerate(zip(modules, MODULE_PRESENTATIONS), 1):
-        groups = ''.join(f'<div><h3>{escape(title)}</h3><p>{escape(text)}</p></div>' for title, text in presentation['groups'])
-        topic_list = ''.join(f'<li>{escape(topic)}</li>' for topic in topics)
-        tools = technology_strip(presentation['tools'], f'Tecnologias do módulo {index}', f'module-{index}-technologies')
-        sections.append(f'''<section class="course-module learning-module" id="{index}" aria-labelledby="module-{index}-title">
-          <div class="learning-module-heading"><span class="tag">Módulo 0{index}</span><h2 id="module-{index}-title">{escape(name)}</h2><span class="module-meta">{escape(hours)}</span></div>
-          <div class="course-detail"><p class="learning-module-intro">{escape(presentation['intro'])}</p><div class="learning-outcomes">{groups}</div></div>
-          {tools}
-          <details class="learning-syllabus"><summary>Explorar todos os conteúdos <span>{len(topics)} tópicos</span></summary><ul>{topic_list}</ul></details>
-          <p class="learning-suggestion"><strong>Conteúdos complementares sugeridos</strong>{escape(suggestion)}</p>
-        </section>''')
+    for index, (name, hours, description, topics) in enumerate(modules, 1):
+        badges = ''.join(f'<span class="chip">{escape(topic)}</span>' for topic in topics)
+        sections.append(f"""<section class="course-module" id="{index}">
+          <div><span class="tag">Módulo 0{index}</span><h2>{escape(name)}</h2><span class="module-meta">{escape(hours)}</span></div>
+          <div class="course-detail"><p>{escape(description)}</p><div class="chips">{badges}</div></div>
+        </section>""")
     return ''.join(sections)
 
 
@@ -113,4 +71,16 @@ def enrich_course(body):
         body += '</div>'
     else:
         body = body.replace('class="home-content"', 'class="home-content learning-course"', 1)
+    patterns = ('<div class="closing-side closing-side-left" data-lg-pattern aria-hidden="true"></div>'
+                '<div class="closing-side closing-side-right" data-lg-pattern aria-hidden="true"></div>')
+    heading_start = body.index('<section class="page-heading')
+    heading_end = body.index('</section>', heading_start)
+    heading = body[heading_start:heading_end]
+    if patterns not in heading:
+        raise ValueError('The course heading patterns were not found.')
+    body = body[:heading_start] + heading.replace(patterns, '', 1) + body[heading_end:]
+    summary = '<div class="course-summary">'
+    if summary not in body:
+        raise ValueError('The course summary was not found.')
+    body = body.replace(summary, '<div class="course-summary course-summary-with-pattern">' + patterns, 1)
     return body

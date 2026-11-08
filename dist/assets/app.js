@@ -4,11 +4,24 @@
   const button = document.querySelector('[data-theme-toggle]');
   const updateLabel = () => { if (button) button.setAttribute('aria-label', root.dataset.theme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'); };
   updateLabel();
+  let themeTransitionTimer = null;
   button?.addEventListener('click', () => {
+    root.classList.add('theme-transitioning');
     const theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
     root.dataset.theme = theme;
     try { localStorage.setItem(key, theme); } catch {}
     updateLabel();
+    void root.offsetHeight;
+    if (themeTransitionTimer) cancelAnimationFrame(themeTransitionTimer);
+    themeTransitionTimer = requestAnimationFrame(() => {
+      themeTransitionTimer = requestAnimationFrame(() => {
+        root.classList.remove('theme-transitioning');
+        themeTransitionTimer = null;
+      });
+    });
+    setTimeout(() => {
+      root.classList.remove('theme-transitioning');
+    }, 150);
   });
   const menu = document.querySelector('[data-menu]');
   const nav = document.querySelector('#primary-nav');
@@ -71,81 +84,14 @@
   if (projectContainer && window.AX_PROJECTS && projectContainer.children.length === 0) {
     window.AX_PROJECTS.forEach(project => {
       const article = document.createElement('article');
-      article.className = `project ${project.meshTheme || 'mesh-blue'}`;
-
+      article.className = 'project';
       const preview = document.createElement('div');
       preview.className = 'project-preview';
-
-      const codeBadge = document.createElement('div');
-      codeBadge.className = 'project-code-badge';
-      codeBadge.innerHTML = `<span class="code-bracket">&lt;&gt;</span> ${project.codeLang || 'Python'}`;
-      preview.appendChild(codeBadge);
-
-      const mockup = document.createElement('div');
-      mockup.className = 'project-mockup';
-
-      const header = document.createElement('div');
-      header.className = 'mockup-header';
-      header.textContent = project.mockupTitle || project.name;
-      mockup.appendChild(header);
-
-      if (project.chips && project.chips.length) {
-        const chipsWrap = document.createElement('div');
-        chipsWrap.className = 'mockup-chips';
-        project.chips.forEach(c => {
-          const chip = document.createElement('span');
-          chip.className = `mockup-chip ${c.solid ? 'solid' : 'outline'}`;
-          chip.textContent = c.text;
-          chipsWrap.appendChild(chip);
-        });
-        mockup.appendChild(chipsWrap);
-      }
-
-      if (project.stats && project.stats.length) {
-        project.stats.forEach(s => {
-          const row = document.createElement('div');
-          row.className = 'mockup-stat-row';
-          const label = document.createElement('span');
-          label.className = 'mockup-stat-label';
-          label.textContent = s.label;
-          const segments = document.createElement('div');
-          segments.className = 'mockup-stat-segments';
-          for (let i = 0; i < (s.total || 10); i++) {
-            const seg = document.createElement('span');
-            seg.className = `mockup-stat-segment ${i < s.count ? s.color : ''}`;
-            segments.appendChild(seg);
-          }
-          const val = document.createElement('span');
-          val.className = 'mockup-stat-val';
-          val.textContent = s.val;
-          row.append(label, segments, val);
-          mockup.appendChild(row);
-        });
-      }
-
-      if (project.progress) {
-        const prog = document.createElement('div');
-        prog.className = 'mockup-progress';
-        prog.innerHTML = `
-          <div class="mockup-progress-label">
-            <span>${project.progress.label}</span>
-            <span>${project.progress.valText}</span>
-          </div>
-          <div class="mockup-progress-track">
-            <div class="mockup-progress-bar" style="width: ${project.progress.percent}%;"></div>
-          </div>
-        `;
-        mockup.appendChild(prog);
-      }
-
-      if (project.footer) {
-        const foot = document.createElement('div');
-        foot.className = 'mockup-footer';
-        foot.textContent = project.footer;
-        mockup.appendChild(foot);
-      }
-
-      preview.appendChild(mockup);
+      const image = document.createElement('img');
+      image.src = project.image || 'assets/hanaro-placeholder.png';
+      image.alt = '';
+      image.loading = 'lazy';
+      preview.appendChild(image);
 
       const content = document.createElement('div');
       content.className = 'project-content';
@@ -157,11 +103,7 @@
       title.className = 'project-title';
       title.textContent = project.name;
 
-      const badge = document.createElement('span');
-      badge.className = 'project-badge';
-      badge.innerHTML = `<span class="project-badge-num">${project.num || ''}</span> ${project.category || ''}`;
-
-      titleRow.append(title, badge);
+      titleRow.append(title);
 
       const desc = document.createElement('p');
       desc.className = 'project-desc';
