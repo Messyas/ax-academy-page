@@ -128,8 +128,9 @@
 /* Apoiadores da formação. */
 .supporters { padding: 56px 32px; }
 .supporters h2 { font-size: clamp(2rem, 3vw, 2.8rem); }
-.supporters > p { color: var(--secondary); margin-top: 12px; }
+.supporters > p { color: var(--secondary); margin-top: 12px; max-width: 590px; }
 .supporters-logos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 32px; }
+.supporters-action { display: flex; width: fit-content; margin: 24px 0 0 auto; }
 .supporter { display: flex; align-items: center; justify-content: flex-start; flex-direction: column; gap: 10px; min-height: 160px; padding: 20px; font-weight: 600; }
 .supporter-ifam-label { font-size: 1.35rem; font-weight: 700; color: var(--secondary); }
 .supporter-ifam { width: 92px; height: 92px; object-fit: contain; }

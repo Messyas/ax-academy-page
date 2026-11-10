@@ -14,6 +14,7 @@
 .contact-page-content .contact-social-list { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 16px; }
 .contact-page-content .contact-social-row { display: inline-flex; align-items: center; gap: 12px; padding: 6px 0; border: 0; border-radius: 0; background: transparent; color: var(--text); transition: color .2s; }
 .contact-page-content .contact-social-row:hover { color: var(--brand); background: transparent; transform: none; }
+.contact-page-content .contact-social-row-inova:hover, .contact-page-content .contact-social-row-inova:focus-visible { color: #2f9e41; outline-color: #2f9e41; }
 .contact-page-content .contact-social-row .social-icon { display: grid; place-items: center; flex: none; color: currentColor; }
 .contact-page-content .contact-social-row .social-icon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: butt; stroke-linejoin: miter; }
 .contact-page-content .contact-social-row .social-dot { fill: currentColor; stroke: none; }
