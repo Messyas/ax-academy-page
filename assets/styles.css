@@ -2211,3 +2211,13 @@ body:not(.home-page) .site-header {
 /* Technology badges follow the active theme. */
 .portfolio-grid .project-tag { background: var(--surface); }
 
+.footer-brands { display: flex; align-items: center; gap: 20px; }
+.footer-ifam { display: block; width: min(140px, 32vw); height: 36px; object-fit: contain; }
+.footer-ifam-dark { display: none; }
+:root[data-theme="dark"] .footer-ifam-light { display: none; }
+:root[data-theme="dark"] .footer-ifam-dark { display: block; }
+@media (max-width: 720px) { .footer-brands { gap: 14px; flex-wrap: wrap; } .footer-ifam { width: min(120px, 38vw); height: 32px; } }
+.supporter-ifam-dark { display: none; }
+:root[data-theme="dark"] .supporter-ifam-light { display: none; }
+:root[data-theme="dark"] .supporter-ifam-dark { display: block; }
+.footer-ifam-dark { filter: brightness(1.35) saturate(1.2); }

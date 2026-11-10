@@ -222,7 +222,7 @@
   });
   Promise.all([
     loadImage('assets/ax-logo.png'),
-    loadImage('assets/ifam-logo.png'),
+    loadImage('assets/ifam-vertical.png'),
     loadImage('assets/lg-mosaic.png'),
   ]).then(([axImage, ifamImage, lgImage]) => {
     if (!axImage) return;
