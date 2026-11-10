@@ -129,6 +129,7 @@
   const host = canvas.parentElement, ctx = canvas.getContext('2d');
   if (!ctx) return;
   const scene = document.querySelector('[data-intro-scene]');
+  const sticky = document.querySelector('.intro-sticky');
   const copy = document.querySelector('.hero-copy');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const cols = 68, rows = 48, mask = new Uint8Array(cols * rows);
@@ -144,7 +145,7 @@
     if (!scene || reduced.matches || !imageReady) progress = 0;
     else {
       const bounds = scene.getBoundingClientRect();
-      progress = clamp(-bounds.top / Math.max(1, bounds.height - host.getBoundingClientRect().height));
+      progress = clamp(-bounds.top / Math.max(1, bounds.height - sticky.getBoundingClientRect().height));
     }
     const fade = smooth(.10, .25, progress);
     if (copy) {
@@ -164,7 +165,7 @@
     cell = Math.max(width / (mobile ? 58 : 84), height / 34);
     ox = width * (mobile ? .30 : .27) - (cols * cell) / 2;
     oy = (height - rows * cell) / 2;
-    if (reduced.matches) draw(100);
+    draw(reduced.matches ? 100 : (start ? (performance.now() - start) / 1000 : 0));
   };
   const draw = t => {
     ctx.clearRect(0, 0, width, height);

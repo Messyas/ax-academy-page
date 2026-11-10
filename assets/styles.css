@@ -1654,6 +1654,14 @@ h3 {
   min-height: 0
 }
 
+/* Mantém o mosaico pronto para a altura máxima quando as barras do navegador recolhem. */
+@media (max-width: 720px) {
+  .has-scroll-intro .hero-art {
+    height: max(100%, 100vh);
+    height: max(100%, 100lvh)
+  }
+}
+
 .hero-copy {
   opacity: var(--intro-copy-opacity, 1);
   transform: translateY(var(--intro-copy-offset, 0px))
