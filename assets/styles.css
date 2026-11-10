@@ -1,9 +1,3 @@
-@font-face {
-  font-family: InterLocal;
-  src: local('Aptos'), local('Segoe UI');
-  font-display: swap
-}
-
 :root {
   --brand: #e7194a;
   --brand-hover: #850029;
@@ -51,7 +45,7 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--text);
-  font-family: InterLocal, Arial, sans-serif;
+  font-family: 'LG Text', Arial, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased
 }
@@ -602,6 +596,8 @@ h1 {
 .chip {
   display: inline-block;
   padding: 7px 12px;
+  background: var(--surface);
+  color: var(--text);
   border: 1px solid var(--border);
   border-radius: 99px;
   font-size: .8rem;
@@ -1974,12 +1970,12 @@ h3 {
 }
 
 .project-title {
-  font-family: 'Playfair Display', Georgia, 'LG Headline', serif;
+  font-family: 'LG Headline', sans-serif;
   font-size: 1.55rem;
   font-weight: 600;
   color: var(--text);
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
   line-height: 1.2;
 }
 

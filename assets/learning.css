@@ -27,7 +27,7 @@
 .learning-course .course-summary { grid-template-columns: repeat(2, 1fr); }
 .learning-course .course-summary-with-pattern { position: relative; isolation: isolate; overflow: visible; border: 0; }
 .learning-course .course-summary-with-pattern > .closing-side { opacity: 1; background: var(--page); }
-.learning-course .course-summary-with-pattern .lg-pattern-mark { opacity: .26; }
+.learning-course .course-summary-with-pattern .lg-pattern-mark { opacity: var(--lg-pattern-opacity, .08); }
 .learning-course .course-heading-frame { border-bottom: 0; }
 .learning-course .page-heading::after { content: none; }
 .learning-course .course-summary-with-pattern::before,

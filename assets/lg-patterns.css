@@ -1,5 +1,8 @@
 /* Marcas L/G desenhadas em CSS, em quadrados externos ao conteúdo. */
-:root { --lg-pattern-ink: var(--text); }
+:root {
+  --lg-pattern-ink: var(--text);
+  --lg-pattern-opacity: .08;
+}
 
 .home-content .closing { isolation: isolate; overflow: visible; }
 .closing-inner { position: relative; z-index: 1; }
@@ -13,7 +16,7 @@
   grid-template-rows: repeat(var(--pattern-rows, 1), minmax(0, 1fr));
   place-items: center;
   color: var(--lg-pattern-ink);
-  opacity: .26;
+  opacity: var(--lg-pattern-opacity, .08);
   overflow: hidden;
   contain: paint;
   pointer-events: none;
