@@ -516,6 +516,11 @@ h1 {
   display: none
 }
 
+.footer-credits { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.footer-credit-link { color: inherit; text-decoration: none; }
+.footer-credit-link:hover, .footer-credit-link:focus-visible { color: var(--brand); }
+.footer-credit-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 2px; }
+
 :root[data-theme=dark] .footer-lg-light {
   display: none
 }
@@ -2196,10 +2201,6 @@ body:not(.home-page) .site-header {
 /* Social icons: geometric lines inspired by the LG visual language. */
 .social-link svg { width: 21px; height: 21px; stroke-width: 2.5; stroke-linecap: butt; stroke-linejoin: miter; }
 
-
-.footer-credit-link { color: inherit; text-decoration: none; }
-.footer-credit-link:hover, .footer-credit-link:focus-visible { color: var(--brand); }
-.footer-credit-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 2px; }
 
 /* Project artwork reaches the edges of each grid cell. */
 .portfolio-grid .project { padding: 0; }
