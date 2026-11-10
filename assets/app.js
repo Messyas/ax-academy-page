@@ -144,7 +144,7 @@
     if (!scene || reduced.matches || !imageReady) progress = 0;
     else {
       const bounds = scene.getBoundingClientRect();
-      progress = clamp(-bounds.top / Math.max(1, bounds.height - window.innerHeight));
+      progress = clamp(-bounds.top / Math.max(1, bounds.height - host.getBoundingClientRect().height));
     }
     const fade = smooth(.10, .25, progress);
     if (copy) {

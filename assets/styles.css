@@ -1604,7 +1604,8 @@ h3 {
 }
 
 .home-page .hero {
-  min-height: 100svh
+  min-height: 100svh;
+  min-height: 100dvh
 }
 
 @media(max-width:720px) {
@@ -1613,7 +1614,8 @@ h3 {
   }
 
   .home-page .hero {
-    min-height: 100svh
+    min-height: 100svh;
+    min-height: 100dvh
   }
 
   .home-page .hero-art::after {
@@ -1627,7 +1629,8 @@ h3 {
 }
 
 .has-scroll-intro .intro-scene {
-  height: 400svh
+  height: 400svh;
+  height: 400dvh
 }
 
 .has-scroll-intro {
@@ -1642,6 +1645,7 @@ h3 {
   position: sticky;
   top: 0;
   height: 100svh;
+  height: 100dvh;
   overflow: hidden
 }
 
@@ -1672,7 +1676,8 @@ h3 {
 
   .has-scroll-intro .hero {
     height: auto;
-    min-height: 100svh
+    min-height: 100svh;
+    min-height: 100dvh
   }
 
   .hero-copy {
