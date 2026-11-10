@@ -3,6 +3,7 @@ window.AX_PROJECTS = [
   {
     num: '01',
     name: 'Hanaro',
+    image: 'assets/hanaro-placeholder.png',
     category: 'Automação Industrial',
     codeLang: 'Python',
     description: 'Automação da análise de casos de desperdício que acontecem no processo produtivo.',
@@ -22,6 +23,7 @@ window.AX_PROJECTS = [
   {
     num: '02',
     name: 'Synergia',
+    image: 'assets/synergia-logo.png',
     category: 'Supply Chain',
     codeLang: 'Python · SQL',
     description: 'Consolidação de dados e acompanhamento de pendências de suprimentos.',
@@ -39,6 +41,7 @@ window.AX_PROJECTS = [
   {
     num: '03',
     name: 'Vigil',
+    image: 'assets/vigil-logo.png',
     category: 'Machine Learning',
     codeLang: 'Machine Learning',
     description: 'Identificação de parâmetros para classificação de padrões comportamentais.',
@@ -60,6 +63,7 @@ window.AX_PROJECTS = [
   {
     num: '04',
     name: 'Arumã',
+    image: 'assets/aruma-logo.png',
     category: 'Comex & Fiscal',
     codeLang: 'Hiperautomação',
     description: 'Automação de processos voltados à área fiscal de comércio exterior.',
